@@ -17,21 +17,21 @@ public class Proyecto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "El nombre del proyecto no puede estar vacío")
     private String nombre;
-
-    @NotBlank(message = "La descripción no puede estar vacía")
     private String descripcion;
 
+
     @ManyToOne
-    @JoinColumn(name = "cliente_id")
+    @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
+
 
     @ManyToMany
     @JoinTable(
-            name = "proyecto_empleado",
+            name = "proyecto_empleados",
             joinColumns = @JoinColumn(name = "proyecto_id"),
             inverseJoinColumns = @JoinColumn(name = "empleado_id")
     )
     private List<Empleado> empleados;
 }
+

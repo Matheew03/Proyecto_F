@@ -16,15 +16,18 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private UsuarioRepository usuarioRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username)
-            throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Usuario usuario = usuarioRepository.findByUsername(username)
-                .orElseThrow(() ->
-                        new UsernameNotFoundException("Usuario no encontrado: " + username));
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
+
+        // Quitar prefijo ROLE_ porque Spring lo agrega internamente
+        String rol = usuario.getRol().replace("ROLE_", "");
 
         return User.withUsername(usuario.getUsername())
-                .password(usuario.getPassword())
-                .roles(usuario.getRol()) // debe ser "ADMIN" o "USER"
+                .password(usuario.getPassword()) // ya encriptada
+                .roles(rol) // ADMIN o USER
                 .build();
     }
+
 }
+

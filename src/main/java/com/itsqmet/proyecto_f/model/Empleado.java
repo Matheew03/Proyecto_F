@@ -1,8 +1,11 @@
 package com.itsqmet.proyecto_f.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "empleados")
@@ -24,4 +27,9 @@ public class Empleado {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "perfil_id", referencedColumnName = "id")
     private Perfil perfil;
+
+
+    @ManyToMany(mappedBy = "empleados")
+    @JsonIgnore  
+    private List<Proyecto> proyectos;
 }

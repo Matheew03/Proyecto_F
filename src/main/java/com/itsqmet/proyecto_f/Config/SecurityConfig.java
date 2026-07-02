@@ -6,6 +6,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -24,17 +25,25 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
+    // IGNORAR COMPLETAMENTE LAS RUTAS DE AUTH ANTES DE ENTRAR A LOS FILTROS
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().requestMatchers("/api/auth/**", "/debug/**");
+    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
+                        // El resto de rutas requieren roles específicos
                         .requestMatchers("/api/usuarios/**").hasRole("ADMIN")
-                        .requestMatchers("/api/clientes/**").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers("/api/proyectos/**").hasAnyRole("ADMIN", "USER")
                         .requestMatchers("/api/empleados/**").hasRole("ADMIN")
                         .requestMatchers("/api/perfiles/**").hasRole("ADMIN")
+
+                        .requestMatchers("/api/clientes/**").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers("/api/proyectos/**").hasAnyRole("ADMIN", "USER")
+
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.maximumSessions(1))

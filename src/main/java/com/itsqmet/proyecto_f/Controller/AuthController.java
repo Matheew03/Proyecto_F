@@ -2,6 +2,8 @@ package com.itsqmet.proyecto_f.Controller;
 
 import com.itsqmet.proyecto_f.model.Usuario;
 import com.itsqmet.proyecto_f.Service.UsuarioService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -9,8 +11,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -23,6 +29,7 @@ public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    private final HttpSessionSecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
 
     @PostMapping("/register")
     public ResponseEntity<?> registrar(@Valid @RequestBody Usuario usuario) {
@@ -34,7 +41,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody Usuario usuario) {
+    public ResponseEntity<?> login(@Valid @RequestBody Usuario usuario, HttpServletRequest request, HttpServletResponse response) {
         try {
             Authentication auth = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -42,7 +49,16 @@ public class AuthController {
                             usuario.getPassword()
                     )
             );
+
             if (auth.isAuthenticated()) {
+
+                SecurityContext context = SecurityContextHolder.createEmptyContext();
+                context.setAuthentication(auth);
+                SecurityContextHolder.setContext(context);
+
+
+                securityContextRepository.saveContext(context, request, response);
+
                 return ResponseEntity.ok("Login exitoso");
             } else {
                 return ResponseEntity.status(401).body("Credenciales inválidas");
@@ -51,5 +67,4 @@ public class AuthController {
             return ResponseEntity.status(401).body("Error de autenticación: " + e.getMessage());
         }
     }
-
 }

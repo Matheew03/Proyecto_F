@@ -33,8 +33,5 @@ public class Usuario {
 
     @NotBlank(message = "El rol no puede estar vacío")
     private String rol = "USER";
-
-    @OneToOne
-    @JoinColumn(name = "empleado_id")
-    private Empleado empleado;
 }
+
