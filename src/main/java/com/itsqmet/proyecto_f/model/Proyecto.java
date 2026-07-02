@@ -1,6 +1,7 @@
 package com.itsqmet.proyecto_f.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.util.List;
@@ -16,15 +17,16 @@ public class Proyecto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "El nombre del proyecto no puede estar vacío")
     private String nombre;
+
+    @NotBlank(message = "La descripción no puede estar vacía")
     private String descripcion;
 
-    // Relación N:1 con Cliente
     @ManyToOne
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
-    // Relación N:M con Empleado
     @ManyToMany
     @JoinTable(
             name = "proyecto_empleado",

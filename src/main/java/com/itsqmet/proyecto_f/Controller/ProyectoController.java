@@ -2,6 +2,8 @@ package com.itsqmet.proyecto_f.Controller;
 
 import com.itsqmet.proyecto_f.model.Proyecto;
 import com.itsqmet.proyecto_f.Service.ProyectoService;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,15 +30,18 @@ public class ProyectoController {
     }
 
     @PostMapping
-    public Proyecto guardarProyecto(@RequestBody Proyecto proyecto) {
-        return proyectoService.guardarProyecto(proyecto);
+    public ResponseEntity<Proyecto> guardarProyecto(@Valid @RequestBody Proyecto proyecto) {
+        Proyecto nuevo = proyectoService.guardarProyecto(proyecto);
+        return ResponseEntity.ok(nuevo);
     }
 
     @PutMapping("/{id}")
-    public Proyecto actualizarProyecto(@PathVariable Long id, @RequestBody Proyecto proyecto) {
+    public ResponseEntity<Proyecto> actualizarProyecto(@PathVariable Long id, @Valid @RequestBody Proyecto proyecto) {
         proyecto.setId(id);
-        return proyectoService.guardarProyecto(proyecto);
+        Proyecto actualizado = proyectoService.guardarProyecto(proyecto);
+        return ResponseEntity.ok(actualizado);
     }
+
 
     @DeleteMapping("/{id}")
     public void eliminarProyecto(@PathVariable Long id) {

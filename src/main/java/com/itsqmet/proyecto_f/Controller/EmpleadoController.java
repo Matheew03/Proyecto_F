@@ -2,6 +2,8 @@ package com.itsqmet.proyecto_f.Controller;
 
 import com.itsqmet.proyecto_f.model.Empleado;
 import com.itsqmet.proyecto_f.Service.EmpleadoService;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,15 +30,18 @@ public class EmpleadoController {
     }
 
     @PostMapping
-    public Empleado guardarEmpleado(@RequestBody Empleado empleado) {
-        return empleadoService.guardarEmpleado(empleado);
+    public ResponseEntity<Empleado> guardarEmpleado(@Valid @RequestBody Empleado empleado) {
+        Empleado nuevo = empleadoService.guardarEmpleado(empleado);
+        return ResponseEntity.ok(nuevo);
     }
 
     @PutMapping("/{id}")
-    public Empleado actualizarEmpleado(@PathVariable Long id, @RequestBody Empleado empleado) {
+    public ResponseEntity<Empleado> actualizarEmpleado(@PathVariable Long id, @Valid @RequestBody Empleado empleado) {
         empleado.setId(id);
-        return empleadoService.guardarEmpleado(empleado);
+        Empleado actualizado = empleadoService.guardarEmpleado(empleado);
+        return ResponseEntity.ok(actualizado);
     }
+
 
     @DeleteMapping("/{id}")
     public void eliminarEmpleado(@PathVariable Long id) {

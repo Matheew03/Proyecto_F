@@ -2,6 +2,8 @@ package com.itsqmet.proyecto_f.Controller;
 
 import com.itsqmet.proyecto_f.model.Perfil;
 import com.itsqmet.proyecto_f.Service.PerfilService;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,15 +30,18 @@ public class PerfilController {
     }
 
     @PostMapping
-    public Perfil guardarPerfil(@RequestBody Perfil perfil) {
-        return perfilService.guardarPerfil(perfil);
+    public ResponseEntity<Perfil> guardarPerfil(@Valid @RequestBody Perfil perfil) {
+        Perfil nuevo = perfilService.guardarPerfil(perfil);
+        return ResponseEntity.ok(nuevo);
     }
 
     @PutMapping("/{id}")
-    public Perfil actualizarPerfil(@PathVariable Long id, @RequestBody Perfil perfil) {
+    public ResponseEntity<Perfil> actualizarPerfil(@PathVariable Long id, @Valid @RequestBody Perfil perfil) {
         perfil.setId(id);
-        return perfilService.guardarPerfil(perfil);
+        Perfil actualizado = perfilService.guardarPerfil(perfil);
+        return ResponseEntity.ok(actualizado);
     }
+
 
     @DeleteMapping("/{id}")
     public void eliminarPerfil(@PathVariable Long id) {

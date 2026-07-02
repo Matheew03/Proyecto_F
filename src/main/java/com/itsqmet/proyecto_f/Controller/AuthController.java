@@ -2,6 +2,7 @@ package com.itsqmet.proyecto_f.Controller;
 
 import com.itsqmet.proyecto_f.model.Usuario;
 import com.itsqmet.proyecto_f.Service.UsuarioService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,7 +25,7 @@ public class AuthController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<?> registrar(@RequestBody Usuario usuario) {
+    public ResponseEntity<?> registrar(@Valid @RequestBody Usuario usuario) {
         Optional<String> error = usuarioService.registrar(usuario);
         if (error.isPresent()) {
             return ResponseEntity.badRequest().body(error.get());
@@ -32,9 +33,8 @@ public class AuthController {
         return ResponseEntity.ok("Usuario registrado correctamente");
     }
 
-
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Usuario usuario) {
+    public ResponseEntity<?> login(@Valid @RequestBody Usuario usuario) {
         try {
             Authentication auth = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -51,4 +51,5 @@ public class AuthController {
             return ResponseEntity.status(401).body("Error de autenticación: " + e.getMessage());
         }
     }
+
 }
